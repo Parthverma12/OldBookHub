@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');  // For password hashing
 const session = require('express-session');
 
 const multer = require('multer'); // For handling file uploads
+const { error } = require('console');
 
 const app = express();
 
@@ -65,7 +66,7 @@ app.get('/', (req, res) => {
 
 // Signup page (GET)
 app.get('/signup', (req, res) => {
-  res.render('signup.ejs');
+  res.render('signup.ejs',{error: null});
 });
 
 // Signup form submit (POST)
@@ -76,7 +77,7 @@ app.post('/signup', async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.send('❌ User already exists! Try logging in.');
+      return res.render('signup.ejs',{error: '❌ User already exists! Try logging in.'});
     }
 
     // Hash password
@@ -86,7 +87,7 @@ app.post('/signup', async (req, res) => {
     const newUser = new User({ name, email, passwordHash });
     await newUser.save();
 
-    res.send('✅ Signup successful! You can now log in.');
+    res.send('signup.ejs',{error:'✅ Signup successful! Go back for login.'});
   } catch (err) {
     console.error(err);
     res.send('❌ Error during signup.');
@@ -234,7 +235,7 @@ app.post('/donate-book', requireLogin,upload.single('image'), async (req, res) =
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.ATLASDB_URI)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch(err => console.log('❌ MongoDB connection error:', err.message));
 
