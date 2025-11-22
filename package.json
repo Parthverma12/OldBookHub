@@ -1,7 +1,4 @@
 {
-  "engines": {
-    "node":"22.19.0"
-  },
   "name": "oldbookhub",
   "version": "1.0.0",
   "description": "",
