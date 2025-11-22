@@ -45,7 +45,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.use(session({
-  secret: 'oldbookhub-secret-key',
+  secret: process.env.SECRET_KEY,
   resave: false,
   saveUninitialized: true
 }));
