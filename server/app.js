@@ -193,7 +193,7 @@ app.post('/donate-book', requireLogin,upload.single('image'), async (req, res) =
   try {
     const { title, author, description, ngo } = req.body;
     let  url = req.file.path;
-    let filename = req.file.path;
+    let filename = req.file.filename;
     const donation = new Book({
       title,
       author,
