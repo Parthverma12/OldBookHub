@@ -7,7 +7,7 @@ const bookSchema = new mongoose.Schema({
   description: { type: String },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
-  image: { type: String },
+  image: {url : String,filename: String},
   location: { type: String },
   isDonated: { type: Boolean, default: false }
 

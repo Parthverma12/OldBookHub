@@ -34,7 +34,7 @@
         <div class="col-md-4 col-sm-6 mb-4">
           <div class="card shadow-sm h-100">
             <% if (book.image) { %>
-              <img src="<%= book.image %>" class="card-img-top" alt="Book Image">
+              <img src="<%= book.image.url%>" class="card-img-top" alt="Book Image">
               <% } else { %>
                 <img src="/images/default-book.png" class="card-img-top" alt="No Image">
                 <% } %>

@@ -2,15 +2,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-
 require('dotenv').config();
 const User = require('./models/user'); 
 const Book = require('./models/Book');
 const bcrypt = require('bcryptjs');  // For password hashing
 const session = require('express-session');
 
-const multer = require('multer'); // For handling file uploads
-const { error } = require('console');
+const multer = require('multer');
+const {storage} = require('./config/cloudinary');
+const upload= multer({storage});
 
 const app = express();
 
@@ -19,30 +19,9 @@ app.use(express.urlencoded({ extended: true }));  // To parse form data
 app.use(express.json());                          // To parse JSON data
 app.use(express.static('public'));
 
-// Configure storage for uploaded images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads'));// folder to save uploaded images
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // unique filename
-  }
-});
-
-// Initialize multer upload middleware
-const upload = multer({ storage });
-
-//to serve uploaded images statically and make them accessible via URL
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-
 // Set EJS as view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Static files (like CSS, JS, images)
-app.use(express.static(path.join(__dirname, '../client')));
 
 app.use(session({
   secret: process.env.SECRET_KEY,
@@ -150,15 +129,15 @@ app.get('/post-book', requireLogin, (req, res) => {
 app.post('/post-book', requireLogin, upload.single('image'), async (req, res) => {
   try {
     const { title, author, price, description,location } = req.body;
-    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
-
+    let  url = req.file.path;
+    let filename = req.file.path;
     const newBook = new Book({
       title,
       author,
       price,
       description,
       seller: req.session.userId,
-      image: imagePath,
+      image: {url,filename},
       location
     });
 
@@ -213,15 +192,15 @@ app.get('/donate-book', (req, res) => {
 app.post('/donate-book', requireLogin,upload.single('image'), async (req, res) => {
   try {
     const { title, author, description, ngo } = req.body;
-    const imagePath = req.file ? '/uploads/' + req.file.filename : null;
-
+    let  url = req.file.path;
+    let filename = req.file.path;
     const donation = new Book({
       title,
       author,
       description,
       price: 0,
       location: ngo,   // NGO location field   
-      image: imagePath ,   
+      image: {url,filename},   
       seller: req.session.userId, // ✅ fixes the error
       isDonated: true
     });
