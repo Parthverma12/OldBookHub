@@ -169,7 +169,7 @@ app.get('/buy/:id', requireLogin, async (req, res) => {
     if (!book) return res.send('❌ Book not found');
 
     // For now, just show the seller details
-    res.render('buyBook.ejs', { book });
+    res.render('buybook.ejs', { book });
   } catch (err) {
     console.error(err);
     res.send('❌ Error loading book.');
